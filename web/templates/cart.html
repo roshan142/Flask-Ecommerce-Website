@@ -1,0 +1,188 @@
+{% extends "index.html" %}
+{% block title %}Crowned Collections{% endblock %}
+{% block content %}
+<!-- Cart Page Start -->
+<div class="container-fluid py-5">
+    <div class="container py-5">
+        <div class="table-responsive">
+            <h1>Your Cart</h1>
+            {% if cart_items %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Products</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Total</th>
+                        <th scope="col">Handle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart_items %}
+                    <tr>
+                        <th scope="row">
+                            <div class="d-flex align-items-center">
+                                <img src="{{ item.product.photo }}" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="{{ item.product.product_name }}">
+                            </div>
+                        </th>
+                        <td>
+                            <p class="mb-0 mt-4">{{ item.product.product_name }}</p>
+                        </td>
+                        <td>
+                            <p class="mb-0 mt-4">₹{{ item.product.price }}</p>
+                        </td>
+                        <td>
+                            <div class="input-group quantity mt-4" style="width: 100px;">
+                                <div class="input-group-btn">
+                                    <button class="btn btn-sm btn-minus rounded-circle bg-light border minus-btn" data-product-id="{{ item.product.id }}" data-price="{{ item.product.price }}">
+                                        <i class="fa fa-minus"></i>
+                                    </button>
+                                </div>
+                                <input type="text" class="form-control form-control-sm text-center border-0 quantity-input" min="1" max="10" value="{{ item.quantity }}" data-product-id="{{ item.product.id }}" readonly>
+                                <div class="input-group-btn">
+                                    <button class="btn btn-sm btn-plus rounded-circle bg-light border plus-btn" data-product-id="{{ item.product.id }}" data-price="{{ item.product.price }}">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div></form>
+                        </td>
+                        <td>
+                            <p class="mb-0 mt-4 total-price" id="total-price-{{ item.product.id }}">₹{{ item.product.price * item.quantity }}</p>
+                        </td>
+                        <td>
+                            <form action="{{ url_for('views.remove_from_cart', product_id=item.product.id) }}" method="POST">
+                                <button type="submit" class="btn btn-md rounded-circle bg-light border mt-4">
+                                    <i class="fa fa-times text-danger"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>Your cart is empty.</p>
+            {% endif %}
+        </div>
+
+        <div class="row g-4 justify-content-end">
+            <div class="col-8"></div>
+            <div class="col-sm-8 col-md-7 col-lg-6 col-xl-4">
+                <div class="bg-light rounded">
+                    <div class="p-4">
+                        <h1 class="display-6 mb-4">Cart <span class="fw-normal">Total</span></h1>
+                        <div class="d-flex justify-content-between mb-4">
+                            <h5 class="mb-0 me-4">Subtotal:</h5>
+                            <p class="mb-0" id="subtotal">₹{{ cart_items | map(attribute='product') | map(attribute='price') | sum }}</p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <h5 class="mb-0 me-4">Shipping</h5>
+                            <div class="">
+                                <p class="mb-0" id="shipping-cost">Flat rate: ₹80.00</p>
+                            </div>
+                        </div>
+                        <p class="mb-0 text-end"> Free Shipping All Over India</p>
+                    </div>
+                    <div class="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
+                        <h5 class="mb-0 ps-4 me-4">Total</h5>
+                        {% if cart_items %}
+                        <p class="mb-0 pe-4" id="total">₹{{ cart_items | map(attribute='product') | map(attribute='price') | sum + 80 }}</p>
+                        {% else %}
+                        <p class="mb-0 pe-4">₹0</p>
+                        {% endif %}
+                    </div>
+                    {% if cart_items %}
+                    <a class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" href="/checkout">
+                        Proceed Checkout
+                    </a>                    
+                    {% endif %}
+                    <a class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" href="/">
+                        Continue Shopping
+                    </a>  
+                  
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Cart Page End -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Function to update the total price of a product
+        function updateTotalPrice(productId, quantity, price) {
+            const totalPriceElement = document.getElementById(`total-price-${productId}`);
+            const newTotal = (quantity * price).toFixed(2);
+            totalPriceElement.textContent = `₹${newTotal}`;
+            updateCartTotal(); // Update the overall cart totals
+        }
+
+        // Function to update the overall cart subtotal and total
+        function updateCartTotal() {
+            let subtotal = 0;
+            // Calculate subtotal by summing up all individual total prices
+            document.querySelectorAll('.total-price').forEach(function (element) {
+                subtotal += parseFloat(element.textContent.replace('₹', ''));
+            });
+
+            // Display the updated subtotal
+            document.getElementById('subtotal').textContent = `₹${subtotal.toFixed(2)}`;
+
+            // Calculate and display the total (subtotal + shipping cost)
+            const shipping = 80.00; // Flat rate shipping cost
+            const total = subtotal + shipping;
+            document.getElementById('total').textContent = `₹${total.toFixed(2)}`;
+        }
+
+        function updateQuantityInDB(productId, quantity) {
+            fetch('/update_quantity', { // Make sure the URL matches your route
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ product_id: productId, quantity: quantity }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    alert('Failed to update quantity.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        // Event listener for plus button
+        document.querySelectorAll('.plus-btn').forEach(function (button) {
+            button.addEventListener('click', function () {
+                const productId = this.getAttribute('data-product-id');
+                const price = parseFloat(this.getAttribute('data-price'));
+                const quantityInput = document.querySelector(`.quantity-input[data-product-id="${productId}"]`);
+                let quantity = parseInt(quantityInput.value);
+                if (quantity <10){
+                quantity++;
+                quantityInput.value = quantity;
+                updateTotalPrice(productId, quantity, price);
+                updateQuantityInDB(productId, quantity);
+            }
+            });
+        });
+
+        // Event listener for minus button
+        document.querySelectorAll('.minus-btn').forEach(function (button) {
+            button.addEventListener('click', function () {
+                const productId = this.getAttribute('data-product-id');
+                const price = parseFloat(this.getAttribute('data-price'));
+                const quantityInput = document.querySelector(`.quantity-input[data-product-id="${productId}"]`);
+                let quantity = parseInt(quantityInput.value);
+                if (quantity > 1) {
+                    quantity--;
+                    quantityInput.value = quantity;
+                    updateTotalPrice(productId, quantity, price);
+                    updateQuantityInDB(productId, quantity);
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

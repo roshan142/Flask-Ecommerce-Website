@@ -1,0 +1,59 @@
+{%extends "index.html"%}
+{% block title %}Crowned Collections{% endblock %}
+{%block content%}
+    <div class="container py-5">
+        <div class="row g-4 mb-5">
+            <div class="col-lg-8 col-xl-9">
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="border rounded">
+                            <a href="#">
+                                <img src="{{ product_view.photo }}" class="img-fluid rounded" alt="Image">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <h4 class="fw-bold mb-3">{{ product_view.product_name }}</h4>
+                        <p class="mb-3">Category: {{ product_view.gender }}</p>
+                        <h5 class="fw-bold mb-3">₹{{ product_view.price }}</h5>
+                        <div class="d-flex mb-4">
+                            {% if random_number == 5 %}
+                            <i class="fa fa-star text-secondary"></i>
+                            <i class="fa fa-star text-secondary"></i>
+                            <i class="fa fa-star text-secondary"></i>
+                            <i class="fa fa-star text-secondary"></i>
+                            <i class="fa fa-star text-secondary"></i>
+                            {% elif random_number == 4 %}
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star"></i>
+                            {% elif random_number == 3 %}
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                            {% else %}
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                            {% endif %}
+                        </div>
+                        <p class="mb-4">{{ product_view.description }}</p>
+                        
+                        <a href="/add-to-cart/{{ product_view.id }}" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                        {% if product_view.id == 28 %}
+                        <a href="/product/{{ product_view.id - 1}}" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i class="fa fa-arrow-left me-2 text-primary"></i>Prev</a>
+                        {% elif product_view.id == 1 %}
+                        <a href="/product/{{ product_view.id + 1}}" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i class="fa fa-arrow-right me-2 text-primary"></i>Next</a>
+                        {% else %}
+                        <a href="/product/{{ product_view.id - 1}}" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i class="fa fa-arrow-left me-2 text-primary"></i>Prev</a>
+                        <a href="/product/{{ product_view.id + 1}}" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i class="fa fa-arrow-right me-2 text-primary"></i>Next</a>
+                        {% endif %}
+                    </div>
+                </div>
+{%endblock%}

@@ -1,0 +1,36 @@
+{%extends "login.html"%}
+{% block title %}Crowned Collections{% endblock %}
+{%block content%}
+
+<div class="main-w3layouts wrapper">
+    <h1>Crowned Collections</h1>
+    <h2>SignUp</h2>
+    <div class="main-agileinfo">
+        <div class="agileits-top">
+            <form method="POST">
+                <input class="text" type="text" name="name" id="name" placeholder="Name">
+                <input class="text email" type="email" name="email" placeholder="Email" id="email" >
+                <input class="text" type="password" name="password1" id="password1" placeholder="Password">
+                <input class="text w3lpass" type="password" name="password2" id="password2" placeholder="Confirm Password">
+                <input type="submit" value="SIGNUP">
+            </form>
+            <p>Already have an Account? <a href="/login"> Login!</a></p>
+            <p><a href="/">Go Back To Home?</a></p>
+        </div>
+    </div>
+    <ul class="colorlib-bubbles">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+</div>
+
+
+{%endblock%}

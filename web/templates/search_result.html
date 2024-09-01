@@ -1,0 +1,31 @@
+{% extends "index.html" %}
+{% block title %}Search Results - Crowned Collections{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <h1>Search Results for "{{ query }}"</h1>
+
+    {% if results %}
+    <div class="row">
+        {% for product in results %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{{ product.photo }}" class="card-img-top" alt="{{ product.product_name }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.product_name }}</h5>
+                    <p class="card-text">₹{{ product.price }}</p>
+                    <a class="btn border border-secondary rounded-pill px-3 text-primary" href="/product/{{ product.id }}" role="button" >
+                        <i class="fas fa-eye me-2 text-primary"></i> View
+                    </a>
+                    <a href="/add-to-cart/{{ product.id }}" class="btn border border-secondary rounded-pill px-3 text-primary">
+                        <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No products found matching your search criteria.</p>
+    {% endif %}
+</div>
+{% endblock %}
